@@ -26,7 +26,7 @@ export class VideoController {
     @Get() 
     async read(@Query() id): Promise<Object> {
         return await this.videoService.readVideo(id);
-    }
+    }                                                                                                                           
 
     @Get('/:id')
     async stream(@Param('id') id, @Res() response, @Req() request ){

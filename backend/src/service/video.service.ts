@@ -39,8 +39,8 @@ export class VideoService{
                 const videoLength = end - start + 1;
                 response.status(206)
                 response.header({
-                    'Content-Range': `bytes${start}-${end}/${videoPath.size}`,
-                    'Accept Ranges': 'bytes',
+                    'Content-Range': `bytes ${start}-${end}/${videoPath.size}`,
+                    'Accept-Ranges': 'bytes',
                     'Content-length': videoLength,
                     'Content-Type': 'video/mp4',
             })
