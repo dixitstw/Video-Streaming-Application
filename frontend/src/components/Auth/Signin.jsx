@@ -1,18 +1,37 @@
 import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React from 'react'
+import axios from 'axios';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
-const Signin = () => {
+const Signin = (props) => {
 
-  const handleSubmit = (event) => {
+  const { setIsLoggedIn } = props
+  const [errorMessage, setErrorMessage] = useState('')
+  let navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Your login logic here
-    console.log("Form submitted");
-  };
+  
+    const formData = new FormData(event.currentTarget);
+    const form = {
+      email: formData.get('email'),
+      password: formData.get('password')
+    };
+    const { data } = await axios.post('http://localhost:3000/user/signin', form);
 
-  const errrorMessage = ""; // or any error logic later
+    if(data.status === parseInt('401')) {
+      setErrorMessage(data.response)
+    }
+    else {
+      localStorage.setItem('token', data.token)
+      setIsLoggedIn(true)
+      navigate('/video')
+    }
+
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -52,7 +71,7 @@ const Signin = () => {
             autoComplete="current-password"
           />
              <Typography component="p" variant="p" color="red">
-              {errrorMessage}
+              {errorMessage}
             </Typography>
             <Button
               type="submit"

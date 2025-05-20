@@ -53,7 +53,7 @@ const Signup = () => {
                   required
                   fullWidth
                   id="fname"
-                  label="Full Name"
+                  label="First Name"
                   autoFocus
                 />
               </Grid>
