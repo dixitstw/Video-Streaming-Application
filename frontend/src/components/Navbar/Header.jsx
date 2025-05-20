@@ -1,5 +1,5 @@
 import {
-    alpha,
+  alpha,
   AppBar,
   Avatar,
   Box,
@@ -11,6 +11,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import React, { useState } from "react";
 
 const style = {
@@ -45,7 +46,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: 'inherit',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
         width: '100%',
@@ -60,24 +60,29 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 
-const Header = () => {
+const Header = ({isLoggedIn}) => {
 
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const [title, setTitle] = useState("");
     const [video, setVideo] = useState(null);
     const [cover, setCover] = useState(null);
 
-    const handleOpen = () => {
-console.log('open')
-    }
+    const submitForm = async(e) => {
+      e.preventDefault();
 
-    const handleClose = () => {
-console.log('close')
-    }
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('video', video);
+      formData.append('cover', cover);
 
-    const submitForm = () => {
-console.log('submit')
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:3000/video', formData, {
+        headers: ({
+          Authorization: `Bearer ` + token
+        })
+      })
     }
 
   return (
@@ -161,7 +166,6 @@ console.log('submit')
                           variant="contained"
                           sx={{ mt: 3, mb: 2 }}
                         >
-                          Upload
                         </Button>
                       </Box>
                     </Typography>

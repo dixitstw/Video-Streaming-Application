@@ -20,17 +20,22 @@ const Signin = (props) => {
       email: formData.get('email'),
       password: formData.get('password')
     };
-    const { data } = await axios.post('http://localhost:3000/user/signin', form);
-
-    if(data.status === parseInt('401')) {
-      setErrorMessage(data.response)
+  
+    try {
+      const { data } = await axios.post('http://localhost:3000/user/signin', form);
+  
+      if (data.status === 401) {
+        setErrorMessage(data.response);
+        alert(data.response);
+      } else {
+        localStorage.setItem('token', data.token);
+        setIsLoggedIn(true);
+        navigate('/video');
+      }
+    } catch (error) {
+      console.error("Signin error:", error);
+      setErrorMessage("Email or password was incorrect");
     }
-    else {
-      localStorage.setItem('token', data.token)
-      setIsLoggedIn(true)
-      navigate('/video')
-    }
-
   };
 
   return (
@@ -49,7 +54,7 @@ const Signin = (props) => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required

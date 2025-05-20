@@ -13,17 +13,50 @@ import {
   Typography
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-function Copyright() {
-  return ('')
-}
 
 const theme = createTheme();
 
 const Signup = () => {
-  const handleSubmit = (event) => {
+
+  let navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Form submitted");
+  
+    const formData = new FormData(event.currentTarget);
+    const fullname = formData.get('fname') +' '+ formData.get('lname');
+    const email = formData.get('email');
+    const password = formData.get('password');
+  
+    // ✅ Use corrected email regex
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+  
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+  
+    try {
+      const { data } = await axios.post('http://localhost:3000/user/signup', { fullname, email, password });
+  
+      if (data.status === 409) {
+        alert("Email already exists.");
+      } else {
+        alert("Account created successfully!");
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Email already exists.");
+    }
   };
 
   return (
@@ -44,7 +77,7 @@ const Signup = () => {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -89,10 +122,6 @@ const Signup = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
               </Grid>
             </Grid>
             <Button
