@@ -1,14 +1,34 @@
 import { Card, CardActionArea, CardContent, Container, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../Navbar/Header';
 
-const Video = () => {
+const Video = ({ setLoggedIn }) => {
 
     const { id } = useParams();
     const navigate = useNavigate()
     const [videoId] = useState(id);
-    const [videoInfo, setVideoInfo] = React.useState([]);
+    const [videoInfo, setVideoInfo] = useState([]);
+
+    useEffect(() => {
+
+        async function fetchData() {
+            try {
+                const token = localStorage.getItem('token');
+                const {data} = await axios.get(`http://localhost:3000/video?id=${videoId}`, {
+                    headers: ({
+                        Authorization: `Bearer ` + token
+                    })
+                })
+                setVideoInfo(data)
+            }
+            catch {
+                setLoggedIn(false);
+                navigate('/')
+            }
+        }
+        fetchData();
+    }, [videoId, navigate, setLoggedIn])
 
 
   return (

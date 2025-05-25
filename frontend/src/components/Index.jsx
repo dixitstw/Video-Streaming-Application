@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import Signup from "./Auth/Signup";
 import Signin from "./Auth/Signin";
 import Header from "./Navbar/Header";
@@ -9,22 +9,26 @@ import VideoList from "./Video/VideoList";
 export default function Index(props) {
   const { isLoggedIn, setLoggedIn } = props;
 
-  return (
-    <div>
+ return (
+    <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} />
-      <BrowserRouter>
-        {isLoggedIn ? (
-          <Routes>
-            <Route path="/video/:id" element={<Video setLoggedIn = {setLoggedIn} />} />
-            <Route path="/video" element={<VideoList setLoggedIn = {setLoggedIn} />} />
-          </Routes>
+      <Routes>
+        {!isLoggedIn ? (
+          <>
+            <Route path="/signup" element={<Signup setIsLoggedIn={setLoggedIn} />} />
+            <Route path="/" element={<Signin setIsLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />} />
+            {/* Redirect all other paths to "/" when not logged in */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </>
         ) : (
-          <Routes>
-            <Route path="/signup" element={<Signup setIsLoggedIn = {setLoggedIn} />} />
-            <Route path="/" element={<Signin setIsLoggedIn = {setLoggedIn} isLoggedIn = {isLoggedIn}/>} />
-          </Routes>
+          <>
+            <Route path="/video/:id" element={<Video setLoggedIn={setLoggedIn} />} />
+            <Route path="/video" element={<VideoList setLoggedIn={setLoggedIn} />} />
+            {/* Redirect unknown paths to /video */}
+            <Route path="*" element={<Navigate to="/video" replace />} />
+          </>
         )}
-      </BrowserRouter>
-    </div>
+      </Routes>
+    </BrowserRouter>
   );
 }

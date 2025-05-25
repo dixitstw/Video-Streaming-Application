@@ -1,11 +1,32 @@
 import { Card, CardActionArea, CardContent, CardMedia, Container, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-const VideoList = () => {
+const VideoList = ({ setLoggedIn }) => {
 
     const [videos, setVideos] = useState([])
     const navigate = useNavigate();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const token = localStorage.getItem('token')
+                const {data} = await axios.get('http://localhost:3000/video', {
+                    headers: ({
+                        Authorization: `Bearer ` + token
+                    })
+                })
+                console.log(data)
+                setVideos(data)
+            }
+            catch {
+                setLoggedIn(false);
+                navigate('/')
+            }
+        }
+        fetchData();
+    }, [navigate, setLoggedIn])
 
   return (
     <Container>
@@ -33,7 +54,6 @@ const VideoList = () => {
                     </CardActionArea>
                 </Grid>
             })}
-            <p>No videos available here.</p>
     </Grid>
 </Container >
   )

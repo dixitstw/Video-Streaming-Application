@@ -166,6 +166,7 @@ const Header = ({isLoggedIn}) => {
                           variant="contained"
                           sx={{ mt: 3, mb: 2 }}
                         >
+                           Upload
                         </Button>
                       </Box>
                     </Typography>
